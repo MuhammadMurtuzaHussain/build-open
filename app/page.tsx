@@ -4,6 +4,7 @@ import { Schedule } from "@/components/Schedule";
 import { LinkButton } from "@/components/LinkButton";
 import { LogoStrip } from "@/components/Logo";
 import { Heckr } from "@/components/Heckr";
+import Link from "next/link";
 
 function SectionHeading({ id, kicker, children }: { id: string; kicker: string; children: React.ReactNode }) {
   return (
@@ -44,6 +45,29 @@ export default function Home() {
 
       <main id="main" tabIndex={-1} className="mx-auto max-w-2xl space-y-14 px-4 pb-32 focus:outline-none">
         <HappeningNow />
+
+        <section aria-labelledby="buildmode-h">
+          <Link
+            href="/build"
+            className="group relative block overflow-hidden rounded-3xl border border-pink bg-pink p-6 text-ink sm:p-8"
+          >
+            <h2 id="buildmode-h" className="max-w-[16ch] text-4xl leading-[1.02] sm:text-5xl">
+              Build with Heckr
+            </h2>
+            <p className="mt-3 max-w-[42ch] text-lg text-ink/80">
+              Your AI mentor for the day. Describe your idea, get a step-by-step plan, and send screenshots when you&apos;re stuck.
+            </p>
+            <span className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl bg-ink px-5 font-bold text-paper transition-transform group-hover:translate-x-0.5">
+              Start building <span aria-hidden="true">→</span>
+            </span>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-6 -bottom-10 font-mono text-[10rem] leading-none font-bold text-ink/10 select-none sm:text-[13rem]"
+            >
+              H
+            </span>
+          </Link>
+        </section>
 
         <section aria-labelledby="schedule-h">
           <SectionHeading id="schedule-h" kicker="The day">

@@ -1,6 +1,6 @@
 # Build Open: event site + Heckr chat
 
-One-page, mobile-first event site for **Build Open, Hacktoberfest Hack Day Galway x Cybersecurity Society, University of Galway** (Thursday 29 October 2026, The Cube, Áras na Mac Léinn). Students open it on phones from a QR code. Includes **Heckr**, a chat assistant on Claude Haiku.
+One-page, mobile-first event site for **Build Open, Hacktoberfest Hack Day Galway x Cybersecurity Society, University of Galway** (Thursday 29 October 2026, The Cube, Áras na Mac Léinn). Students open it on phones from a QR code. Includes **Heckr** on Claude Haiku 5.5 (`claude-haiku-5-5`, effort `medium`): a quick chat bubble and **Build mode** (`/build`), a day-long mentor that plans, guides and debugs but never writes the student's app code.
 
 Stack: Next.js 15 (App Router), TypeScript, Tailwind v4, `@anthropic-ai/sdk`. No database. Deploy target: Vercel.
 
@@ -26,6 +26,9 @@ Stack: Next.js 15 (App Router), TypeScript, Tailwind v4, `@anthropic-ai/sdk`. No
 - `app/page.tsx`: wordmark, HappeningNow, Schedule, Tracks, Themes, Links with code of conduct, Ownable card, Partners strip, footer, skip link, Heckr.
 - `public/logos/README.md`, `README.md` (setup, `?time=` testing, Vercel deploy, per-instance rate limit note).
 - Verified: typecheck and build pass; `?time=` at 10:30, 12:30, 15:10, 15:35, 16:50 and the real date (before the event) show the right phase and schedule highlight; `/api/chat` returns 503 without a key, 400 for oversize/empty/bad JSON, the error marker with a bad key, and 429 after 20 requests.
+
+- Build mode (`/build`, `/build/[id]`): five-question intake (idea with voice input, experience, coding agents, AI model, laptop) → structured plan from `app/api/mentor/plan` (Zod `PlanSchema`, five phases setup/plan/build/polish/ship) → plan view with tickable steps, copyable commands/prompts, PLAN.md export, and a mentor chat (`app/api/mentor/chat`) with screenshots, dictation and read-aloud. Projects persist in IndexedDB only (`lib/mentor/db.ts`). Shared rate limiter and model settings in `lib/rateLimit.ts`.
+- Build mode hard rules: Heckr is a mentor, not a builder (no app code; commands and agent prompts are fine). Tool/model links come only from `lib/mentor/catalogue.ts`; never quote prices or free-tier limits. Haiku 5.5 thinks by default and thinking counts toward `max_tokens`, so keep generous caps.
 
 ## To do
 - Add the real logo files to `public/logos/` (light versions for the dark background).

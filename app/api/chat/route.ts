@@ -1,46 +1,18 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt } from "@/lib/prompt";
 import { parseOverride } from "@/lib/agenda";
+import { clientIp, EFFORT, jsonError, MODEL, rateLimit, tooFast } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MODEL = process.env.HECKR_MODEL || "claude-haiku-4-5";
 const LIMIT = Number(process.env.HECKR_RATE_LIMIT) || 20;
 const WINDOW_MS = (Number(process.env.HECKR_RATE_WINDOW_MINUTES) || 10) * 60_000;
 const MAX_MESSAGE_CHARS = 1000;
 const MAX_HISTORY = 12; // last N turns sent to the model
 const MAX_TOTAL_CHARS = 12_000;
 
-// In-memory sliding window per IP. Resets when a serverless instance recycles,
-// which is fine for a one-day event. Use Upstash/Vercel KV if you need it global.
-const hits = new Map<string, number[]>();
-
-function rateLimit(ip: string): { ok: boolean; retryAfter: number } {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  if (recent.length >= LIMIT) {
-    hits.set(ip, recent);
-    return { ok: false, retryAfter: Math.ceil((WINDOW_MS - (now - recent[0])) / 1000) };
-  }
-  recent.push(now);
-  hits.set(ip, recent);
-  if (hits.size > 5000) {
-    for (const [k, v] of hits) if (!v.some((t) => now - t < WINDOW_MS)) hits.delete(k);
-  }
-  return { ok: true, retryAfter: 0 };
-}
-
-function clientIp(req: Request): string {
-  const fwd = req.headers.get("x-forwarded-for");
-  return (fwd?.split(",")[0] || req.headers.get("x-real-ip") || "unknown").trim();
-}
-
-const json = (status: number, error: string, extra: Record<string, string> = {}) =>
-  new Response(JSON.stringify({ error }), {
-    status,
-    headers: { "Content-Type": "application/json", ...extra },
-  });
+const json = jsonError;
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -81,13 +53,8 @@ export async function POST(req: Request) {
     return json(503, "Heckr isn't switched on yet. Ask an organiser in the room.");
   }
 
-  const rl = rateLimit(clientIp(req));
-  if (!rl.ok) {
-    const mins = Math.max(1, Math.ceil(rl.retryAfter / 60));
-    return json(429, `You're chatting fast. Give it about ${mins} min and try again, or grab an organiser.`, {
-      "Retry-After": String(rl.retryAfter),
-    });
-  }
+  const rl = rateLimit(`chat:${clientIp(req)}`, LIMIT, WINDOW_MS);
+  if (!rl.ok) return tooFast(rl.retryAfter);
 
   let body: unknown;
   try {
@@ -106,7 +73,10 @@ export async function POST(req: Request) {
       try {
         const res = await client.messages.create({
           model: MODEL,
-          max_tokens: 700,
+          // Haiku 5.5 thinks by default and thinking counts toward max_tokens,
+          // so leave headroom; the prompt keeps visible replies short.
+          max_tokens: 4000,
+          output_config: { effort: EFFORT },
           system: buildSystemPrompt(parseOverride(v.time)),
           messages: v.messages,
           stream: true,

@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Pin the project root so a stray lockfile higher up the disk isn't picked as the workspace.
+  outputFileTracingRoot: process.cwd(),
   async headers() {
     return [
       {

@@ -2,7 +2,10 @@
 
 One-page, mobile-first site for **Build Open, Hacktoberfest Hack Day Galway x Cybersecurity Society, University of Galway**, on Thursday 29 October 2026 in The Cube, Áras na Mac Léinn. Attendees open it on their phones from a QR code.
 
-It shows a live "Happening now" block (countdown to the 15:30 deadline and a call to action that changes through the day), the schedule, tracks, themes and links. It also includes **Heckr**, a chat assistant running on Claude Haiku.
+It shows a live "Happening now" block (countdown to the 15:30 deadline and a call to action that changes through the day), the schedule, tracks, themes and links. It also includes **Heckr**, running on Claude Haiku 5.5 at medium effort, in two forms:
+
+- **Quick chat**: the floating "Ask Heckr" bubble on the home page.
+- **Build mode** (`/build`): a mentor for the whole day. Students answer five quick questions (idea, experience, coding agents, AI model, laptop) and get a five-phase plan (Set up, Plan, Build, Polish, Ship) with terminal commands and prompts to paste into their own coding agent. Each step can be ticked off or sent to the mentor chat, which takes screenshots, voice input (browser speech recognition) and can read answers aloud. Heckr never writes the app's code; it teaches students to steer their agent. Plans are saved only in the student's browser (IndexedDB): no accounts, no database.
 
 Next.js 15 (App Router), TypeScript, Tailwind v4 and `@anthropic-ai/sdk`. There's no database.
 
@@ -21,9 +24,13 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 The key is only read on the server, in `app/api/chat/route.ts`. Never give it a `NEXT_PUBLIC_` prefix. Optional settings, with their defaults, are listed in `.env.example`:
 
-- `HECKR_MODEL`: `claude-haiku-4-5`
-- `HECKR_RATE_LIMIT`: 20 messages per IP
+- `HECKR_MODEL`: `claude-haiku-5-5`
+- `HECKR_RATE_LIMIT`: 20 quick-chat messages per IP
 - `HECKR_RATE_WINDOW_MINUTES`: 10
+- `HECKR_MENTOR_LIMIT`: 40 mentor messages per IP per 10 minutes
+- `HECKR_PLAN_LIMIT`: 6 plans per IP per 30 minutes
+
+Screenshots are downscaled on the device (max 1400px JPEG) and only the two most recent go to the model, to keep costs down.
 
 Without a key, the site still works and Heckr replies with a friendly "isn't switched on yet" message.
 
@@ -47,6 +54,14 @@ Add `?time=HH:MM` to start a simulated Dublin clock on the event day. It keeps t
 | `/?time=15:35` | Judging, DEV write-up prompt |
 | `/?time=16:50` | Feedback link |
 | `/` on any other day | Countdown to doors (before) or "Event finished" (after) |
+
+## Build mode
+
+- Intake and plan view: `components/build/`. Tool and model options (with their fixed links): `lib/mentor/catalogue.ts`.
+- Prompts: `lib/mentor/prompts.ts`. The plan comes back as structured JSON validated against `PlanSchema` in `lib/mentor/types.ts`.
+- API routes: `app/api/mentor/plan` (structured plan) and `app/api/mentor/chat` (streamed mentor replies with images).
+- Storage: `lib/mentor/db.ts` (IndexedDB; falls back to memory with a warning in private windows).
+- Students can copy or download their plan as `PLAN.md` to give their coding agent the context.
 
 ## Editing event facts
 

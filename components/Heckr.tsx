@@ -1,6 +1,8 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import Link from "next/link";
+import { RichText } from "@/components/chat/RichText";
 import { readTimeParam } from "@/lib/useAgenda";
 
 const MAX_CHARS = 1000;
@@ -9,53 +11,6 @@ const GREETING = "Hey, I'm Heckr 👋 I help you build your stuff.";
 const CHIPS = ["Give me an idea", "How do I submit?", "What's happening now?", "Help me debug"];
 
 type Msg = { role: "user" | "assistant"; content: string; error?: boolean };
-
-const URL_RE = /(https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]])/g;
-
-/** Plain text with clickable links; newlines are kept by whitespace-pre-wrap. */
-function Linkified({ text }: { text: string }) {
-  const parts = text.split(URL_RE);
-  return (
-    <>
-      {parts.map((p, i) =>
-        i % 2 === 1 ? (
-          <a key={i} href={p} target="_blank" rel="noopener noreferrer" className="break-all text-pink underline underline-offset-2">
-            {p}
-          </a>
-        ) : (
-          <Fragment key={i}>{p}</Fragment>
-        ),
-      )}
-    </>
-  );
-}
-
-/** Splits on ``` fences. An unclosed fence (mid-stream) still renders as code. */
-function MessageBody({ text }: { text: string }) {
-  const chunks = text.split("```");
-  return (
-    <>
-      {chunks.map((chunk, i) => {
-        if (i % 2 === 0) {
-          return chunk ? (
-            <span key={i} className="whitespace-pre-wrap break-words">
-              <Linkified text={chunk} />
-            </span>
-          ) : null;
-        }
-        const nl = chunk.indexOf("\n");
-        const lang = nl > -1 ? chunk.slice(0, nl).trim() : "";
-        const code = (nl > -1 ? chunk.slice(nl + 1) : chunk).replace(/\n$/, "");
-        return (
-          <pre key={i} className="my-2 overflow-x-auto rounded-lg border border-line bg-ink p-3 font-mono text-[13px] leading-relaxed">
-            {lang && <span className="mb-1 block text-[11px] uppercase tracking-widest text-muted">{lang}</span>}
-            <code>{code}</code>
-          </pre>
-        );
-      })}
-    </>
-  );
-}
 
 function Bubble({ msg }: { msg: Msg }) {
   const isUser = msg.role === "user";
@@ -71,7 +26,7 @@ function Bubble({ msg }: { msg: Msg }) {
               : "rounded-bl-sm border border-line bg-ink-2 text-paper"
         }`}
       >
-        {isUser ? <span className="whitespace-pre-wrap break-words">{msg.content}</span> : body.trim() && <MessageBody text={body.trimEnd()} />}
+        {isUser ? <span className="whitespace-pre-wrap break-words">{msg.content}</span> : body.trim() && <RichText text={body.trimEnd()} />}
         {err && <p className={`text-pink ${body.trim() ? "mt-2" : ""}`}>{err.trim()}</p>}
       </div>
     </li>
@@ -206,6 +161,12 @@ export function Heckr() {
               Heckr
             </h2>
             <div className="flex items-center gap-1">
+              <Link
+                href="/build"
+                className="flex min-h-10 items-center rounded-lg px-3 font-mono text-xs uppercase tracking-widest text-pink hover:bg-ink-3"
+              >
+                Build mode
+              </Link>
               <button
                 type="button"
                 onClick={reset}
@@ -240,6 +201,15 @@ export function Heckr() {
                 </li>
               )}
             </ul>
+            {messages.length === 0 && (
+              <Link
+                href="/build"
+                className="mt-4 block rounded-2xl border border-pink/50 bg-pink/10 p-4 hover:bg-pink/15"
+              >
+                <span className="block font-bold text-paper">Want me as your mentor all day?</span>
+                <span className="mt-0.5 block text-sm text-muted">Build mode: describe your idea, get a step-by-step plan, send me screenshots when you&apos;re stuck.</span>
+              </Link>
+            )}
             {messages.length === 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {CHIPS.map((c) => (
