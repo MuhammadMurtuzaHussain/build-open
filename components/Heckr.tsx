@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { HeckrAvatar } from "@/components/HeckrAvatar";
 import Link from "next/link";
 import { RichText } from "@/components/chat/RichText";
 import { readTimeParam } from "@/lib/useAgenda";
@@ -155,9 +156,7 @@ export function Heckr() {
         >
           <header className="flex items-center justify-between gap-2 border-b border-line bg-ink-2 px-4 py-3">
             <h2 id={titleId} className="flex items-center gap-2 text-lg">
-              <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full bg-pink font-mono text-sm text-ink">
-                H
-              </span>
+              <HeckrAvatar size={32} />
               Heckr
             </h2>
             <div className="flex items-center gap-1">
@@ -278,11 +277,11 @@ export function Heckr() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className={`fixed right-4 bottom-4 z-40 flex min-h-14 items-center gap-2 rounded-full bg-pink pr-5 pl-4 font-bold text-ink shadow-[0_10px_30px_rgba(240,53,127,0.35)] hover:bg-pink-soft sm:right-5 sm:bottom-5 ${
+        className={`fixed right-4 bottom-4 z-40 flex min-h-14 items-center gap-2.5 rounded-full bg-pink pr-5 pl-2 font-bold text-ink shadow-[0_10px_30px_rgba(240,53,127,0.35)] hover:bg-pink-soft sm:right-5 sm:bottom-5 ${
           open ? "hidden" : ""
         }`}
       >
-        <span aria-hidden="true" className="text-xl">💬</span>
+        <HeckrAvatar size={36} className="ring-ink" />
         Ask Heckr
       </button>
     </>

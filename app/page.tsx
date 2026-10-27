@@ -1,4 +1,5 @@
 import { EVENT, LINKS, OWNABLE, THEMES, TRACKS } from "@/lib/event";
+import { HeckrAvatar } from "@/components/HeckrAvatar";
 import { HappeningNow } from "@/components/HappeningNow";
 import { Schedule } from "@/components/Schedule";
 import { LinkButton } from "@/components/LinkButton";
@@ -51,7 +52,7 @@ export default function Home() {
             href="/build"
             className="group relative block overflow-hidden rounded-3xl border border-pink bg-pink p-6 text-ink sm:p-8"
           >
-            <h2 id="buildmode-h" className="max-w-[16ch] text-4xl leading-[1.02] sm:text-5xl">
+            <h2 id="buildmode-h" className="max-w-[16ch] pr-24 text-4xl sm:pr-32 leading-[1.02] sm:text-5xl">
               Build with Heckr
             </h2>
             <p className="mt-3 max-w-[42ch] text-lg text-ink/80">
@@ -60,12 +61,7 @@ export default function Home() {
             <span className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl bg-ink px-5 font-bold text-paper transition-transform group-hover:translate-x-0.5">
               Start building <span aria-hidden="true">→</span>
             </span>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-6 -bottom-10 font-mono text-[10rem] leading-none font-bold text-ink/10 select-none sm:text-[13rem]"
-            >
-              H
-            </span>
+            <HeckrAvatar size={88} className="absolute top-6 right-6 ring-4 ring-ink sm:top-8 sm:right-8 sm:h-28! sm:w-28!" />
           </Link>
         </section>
 

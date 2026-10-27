@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { HeckrAvatar } from "@/components/HeckrAvatar";
 import {
   ArrowUp,
   ImageSquare,
@@ -179,7 +180,7 @@ export function MentorChat({
     <section aria-label="Mentor chat" className="flex h-full min-h-0 flex-col">
       <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <span aria-hidden="true" className="grid h-9 w-9 place-items-center rounded-full bg-pink font-mono font-bold text-ink">H</span>
+          <HeckrAvatar size={40} />
           <div className="leading-tight">
             <p className="font-bold">Heckr</p>
             <p className="text-xs text-muted">Your mentor for the day</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { HeckrAvatar } from "@/components/HeckrAvatar";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -31,11 +32,11 @@ function PlanLoading() {
     <div className="mx-auto flex max-w-xl flex-col items-center py-16 text-center" role="status" aria-live="polite">
       <motion.div
         aria-hidden="true"
-        className="grid h-20 w-20 place-items-center rounded-3xl bg-pink font-mono text-3xl font-bold text-ink"
+        className="rounded-full"
         animate={reduce ? undefined : { rotate: [0, -6, 6, 0], scale: [1, 1.05, 1] }}
         transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
       >
-        H
+        <HeckrAvatar size={112} className="ring-4" />
       </motion.div>
       <h1 className="mt-8 text-3xl sm:text-4xl">Heckr is sketching your plan</h1>
       <div className="mt-3 h-7">
