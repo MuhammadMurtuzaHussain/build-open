@@ -20,15 +20,17 @@ Stack: Next.js 15 (App Router), TypeScript, Tailwind v4, `@anthropic-ai/sdk`. No
 - `components/LinkButton.tsx`: large tappable link buttons.
 - `components/HappeningNow.tsx`: status, current/next, hero countdown (to 15:30 on the day), progress bar with milestone ticks, phase-based call to action (check in + copyable code, building tips, big "Submit now" from 15:00, DEV write-up during judging, feedback after 16:45).
 - `app/layout.tsx`, `app/globals.css`, config files, `.env.example`, `.gitignore`.
+- `components/Heckr.tsx`: floating "Ask Heckr" bubble opening a dialog panel (Esc closes, focus to input on open and back to the bubble on close), greeting, four quick-reply chips, streaming from `/api/chat` with the `?time` param, linkified URLs, fenced code blocks, JSON and `[[heckr-error]]` errors shown kindly (and not sent back to the model), "New chat" reset, 1000-character counter.
+- `components/Logo.tsx`: `Logo` and `LogoStrip`, with a text fallback for missing files (also checked after hydration, since the server-rendered image can fail before `onError` attaches).
+- `components/Schedule.tsx`: schedule with the current item highlighted and past items struck through.
+- `app/page.tsx`: wordmark, HappeningNow, Schedule, Tracks, Themes, Links with code of conduct, Ownable card, Partners strip, footer, skip link, Heckr.
+- `public/logos/README.md`, `README.md` (setup, `?time=` testing, Vercel deploy, per-instance rate limit note).
+- Verified: typecheck and build pass; `?time=` at 10:30, 12:30, 15:10, 15:35, 16:50 and the real date (before the event) show the right phase and schedule highlight; `/api/chat` returns 503 without a key, 400 for oversize/empty/bad JSON, the error marker with a bad key, and 429 after 20 requests.
 
 ## To do
-1. `components/Heckr.tsx` (client): floating bubble bottom right that opens a panel (dialog semantics, Esc closes, focus to input on open and back to the bubble on close). Greeting: "Hey, I'm Heckr 👋 I help you build your stuff." Quick-reply chips: "Give me an idea", "How do I submit?", "What's happening now?", "Help me debug". Streams from `/api/chat`, sends the `?time` param when present, linkifies URLs, renders fenced code, shows 429/400/503 JSON errors and the `[[heckr-error]]` marker kindly, has a "New chat" reset, and a character counter at 1000.
-2. `components/Logo.tsx`: image from `/public/logos/` with text fallback if the file is missing. Strip shows MLH, Cybersecurity Society, Liberty IT (captioned "Exclusive industry sponsor").
-3. `components/Schedule.tsx` (client): schedule list highlighting the current item.
-4. `app/page.tsx`: "Build / Open." wordmark, HappeningNow first, then Schedule, Tracks, Themes (cards), Links (all from `LINKS`, code of conduct with incidents@mlh.io), an Ownable card, logo strip, footer with venue and event page link. Skip link to main content.
-5. `public/logos/README.md` naming the expected files.
-6. `README.md`: setup, `.env.example`, local run, `?time=` testing, one-click Vercel deploy (set `ANTHROPIC_API_KEY` in project settings), note that the rate limit is per serverless instance.
-7. Verify: `npm run build` and `npm run typecheck` pass; test `?time=` at 10:30, 12:30, 15:10, 15:35, 16:50 and on a non-event day; test `/api/chat` validation without a key (expect 503) and with an oversize message.
+- Add the real logo files to `public/logos/` (light versions for the dark background).
+- Deploy to Vercel, set `ANTHROPIC_API_KEY`, and test Heckr end to end with a real key.
+- Point the QR code at the production URL.
 
 ## Commands
 - `npm install`
