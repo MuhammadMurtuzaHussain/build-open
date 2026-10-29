@@ -23,7 +23,7 @@ function timeContext(overrideSec: number | null): string {
     const start = Math.max(sec, 12 * 3600);
     return `It is the event day, Dublin time ${fmtClock(sec)}. Hacking runs until projects are due at 15:30. Plan from ${fmtClock(start)} to 15:30 (about ${Math.round((DUE - start) / 600) / 6} hours).`;
   }
-  return `Assume the standard event build window: hacking 12:00 to 15:30 (3.5 hours), pizza at 13:30, projects due at 15:30.`;
+  return `Assume the standard event build window: hacking 12:00 to 15:30 (3.5 hours), pizza at 14:00, projects due at 15:30.`;
 }
 
 function linksBlock(): string {

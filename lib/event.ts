@@ -21,7 +21,7 @@ export type Milestone = { time: string; label: string; key: string };
 export const SCHEDULE: Milestone[] = [
   { time: "11:00", label: "Doors open and check-in", key: "doors" },
   { time: "12:00", label: "Hacking begins", key: "hack" },
-  { time: "13:30", label: "Pizza", key: "pizza" },
+  { time: "14:00", label: "Pizza", key: "pizza" },
   { time: "15:30", label: "Projects due", key: "due" },
   { time: "15:45", label: "Judging starts", key: "judging" },
   { time: "16:45", label: "Judging ends", key: "judged" },
